@@ -223,6 +223,8 @@ export default function BookingModal({
     checkOutDate: "",
     roomType: "standard",
     roomCount: 1,
+    roomsNearEachOther: false,
+    roomsNearEachOtherCount: 1,
     hotelAmenities: {
       breakfast: true,
       wifi: true,
@@ -320,6 +322,8 @@ export default function BookingModal({
         checkOutDate: "",
         roomType: "standard",
         roomCount: 1,
+        roomsNearEachOther: false,
+        roomsNearEachOtherCount: 1,
         hotelAmenities: {
           breakfast: true,
           wifi: true,
@@ -397,6 +401,8 @@ export default function BookingModal({
       selectHotel: "Select Hotel",
       roomType: "Room Type",
       roomCount: "Number of Rooms",
+      roomsNearEachOther: "Rooms near each other",
+      roomsNearEachOtherCount: "Adjacent rooms count",
       amenities: "Amenities",
       breakfastIncluded: "Breakfast Included",
       freeWifi: "Free WiFi",
@@ -487,6 +493,8 @@ export default function BookingModal({
       selectHotel: "اختر الفندق",
       roomType: "نوع الغرفة",
       roomCount: "عدد الغرف",
+      roomsNearEachOther: "الغرف قريبة من بعضها",
+      roomsNearEachOtherCount: "عدد الغرف القريبة",
       amenities: "المرافق",
       breakfastIncluded: "إفطار مجاني",
       freeWifi: "واي فاي مجاني",
@@ -724,6 +732,8 @@ export default function BookingModal({
                 userEmail: formData.userEmail,
                 roomType: formData.roomType,
                 roomCount: formData.roomCount,
+                roomsNearEachOther: formData.roomsNearEachOther,
+                roomsNearEachOtherCount: Number(formData.roomsNearEachOtherCount) || 1,
                 hotelAmenities: formData.hotelAmenities,
                 flightFrom: formData.flightFrom,
                 flightTo: formData.flightTo,
@@ -1815,6 +1825,56 @@ export default function BookingModal({
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="col-12 mb-2">
+        <div className="form-check">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="roomsNearEachOther"
+            name="roomsNearEachOther"
+            checked={formData.roomsNearEachOther}
+            onChange={handleInputChange}
+            style={{
+              backgroundColor: formData.roomsNearEachOther ? "#dfa528" : "transparent",
+              borderColor: "#dfa528",
+            }}
+          />
+          <label
+            className="form-check-label ms-2"
+            htmlFor="roomsNearEachOther"
+            style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.9)" }}
+          >
+            {t.roomsNearEachOther}
+          </label>
+        </div>
+
+        {formData.roomsNearEachOther && (
+          <div className="mt-2" style={{ maxWidth: "200px" }}>
+            <label className="form-label small mb-1" style={{ color: "rgba(255,255,255,0.9)" }}>
+              {t.roomsNearEachOtherCount}
+            </label>
+            <select
+              name="roomsNearEachOtherCount"
+              value={formData.roomsNearEachOtherCount}
+              onChange={handleInputChange}
+              className="form-select"
+              style={{
+                background: "rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.3)",
+                color: "#fff",
+                borderRadius: "8px",
+                padding: "10px 12px",
+                fontSize: "0.9rem",
+              }}
+            >
+              {Array.from({ length: formData.roomCount }, (_, i) => i + 1).map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="col-12 mb-2">

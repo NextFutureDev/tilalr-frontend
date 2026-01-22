@@ -373,7 +373,7 @@ useEffect(() => {
       successMessage: "We'll contact you within 24 hours to confirm your booking.",
       close: "Close",
       required: "* Required fields",
-      guestOptions: ["2", "4", "6", "8", "10+"],
+      guestOptions: ["1","2","3","4","5","6","7","8","9","10","10+"],
       validationError: "Please fill all required fields"
     },
     ar: {
@@ -462,7 +462,7 @@ useEffect(() => {
       successMessage: "سنتصل بك خلال 24 ساعة لتأكيد حجزك.",
       close: "إغلاق",
       required: "* الحقول المطلوبة",
-      guestOptions: ["٢", "٤", "٦", "٨", "١٠+"],
+      guestOptions: ["١","٢","٣","٤","٥","٦","٧","٨","٩","١٠","١٠+"],
       validationError: "يرجى ملء جميع الحقول المطلوبة"
     }
   };
@@ -558,10 +558,10 @@ useEffect(() => {
     } else {
       switch (currentStep) {
         case 1:
-          return formData.bookingType && formData.numberOfGuests;
+          return !!formData.bookingType;
         case 2:
           if (formData.bookingType === "activity") {
-            return formData.checkInDate && formData.checkOutDate;
+            return formData.checkInDate && formData.checkOutDate && formData.numberOfGuests;
           } else if (formData.bookingType === "hotel") {
             return formData.checkInDate && formData.checkOutDate;
           } else if (formData.bookingType === "flight") {
@@ -949,53 +949,24 @@ useEffect(() => {
         </h5>
       </div>
 
-      {["activity", "hotel", "flight", "package"].map((type) => (
-        <div key={type} className="col-md-6">
+      <div className="col-12 d-flex justify-content-center">
+        <div className="col-md-6 px-0">
           <button
             type="button"
-            onClick={() => handleBookingTypeChange(type)}
-            className={`btn w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 ${bookingType === type ? 'btn-warning' : 'btn-outline-light'}`}
-            style={{ 
+            onClick={() => handleBookingTypeChange('activity')}
+            className={`btn w-100 h-100 d-flex flex-column align-items-center justify-content-center p-3 ${bookingType === 'activity' ? 'btn-warning' : 'btn-outline-light'}`}
+            style={{
               borderRadius: "15px",
               height: "120px",
-              border: bookingType === type ? "2px solid #dfa528" : "1px solid rgba(255,255,255,0.3)",
-              background: bookingType === type ? "rgba(223, 165, 40, 0.1)" : "transparent",
+              border: bookingType === 'activity' ? "2px solid #dfa528" : "1px solid rgba(255,255,255,0.3)",
+              background: bookingType === 'activity' ? "rgba(223, 165, 40, 0.1)" : "transparent",
             }}
           >
-            {type === "activity" && <Globe size={30} className="mb-2" />}
-            {type === "hotel" && <Hotel size={30} className="mb-2" />}
-            {type === "flight" && <Plane size={30} className="mb-2" />}
-            {type === "package" && <ShoppingBag size={30} className="mb-2" />}
+            <Globe size={30} className="mb-2" />
             <span className="fw-bold" style={{ fontSize: "0.9rem" }}>
-              {type === "activity" ? t.bookActivity :
-               type === "hotel" ? t.bookHotel :
-               type === "flight" ? t.bookFlight : t.bookPackage}
+              {t.bookActivity}
             </span>
           </button>
-        </div>
-      ))}
-
-      <div className="col-12 mt-4">
-        <label className="form-label d-flex align-items-center gap-2 mb-2" style={{ color: "#fff" }}>
-          <Users size={16} className="text-warning" />
-          <span className="fw-bold" style={{ fontSize: "0.95rem" }}>{t.numberOfGuests}</span>
-          <small className="text-warning ms-1">*</small>
-        </label>
-        <div className="d-flex flex-wrap gap-2">
-          {t.guestOptions.map((num) => (
-            <button
-              key={num}
-              type="button"
-              onClick={() => setFormData(prev => ({ ...prev, numberOfGuests: num }))}
-              className={`btn px-3 py-2 ${formData.numberOfGuests === num ? 'btn-warning' : 'btn-outline-light'}`}
-              style={{ 
-                borderRadius: "10px", 
-                fontSize: "0.85rem",
-              }}
-            >
-              {num} {lang === "ar" ? "أشخاص" : "People"}
-            </button>
-          ))}
         </div>
       </div>
     </motion.div>
@@ -1325,6 +1296,30 @@ useEffect(() => {
               }}
             />
           </div>
+        </div>
+      </div>
+
+      <div className="col-12 mb-2">
+        <label className="form-label d-flex align-items-center gap-2 mb-2" style={{ color: "#fff" }}>
+          <Users size={16} className="text-warning" />
+          <span className="fw-bold" style={{ fontSize: "0.95rem" }}>{t.numberOfGuests}</span>
+          <small className="text-warning ms-1">*</small>
+        </label>
+        <div className="d-flex flex-wrap gap-2">
+          {t.guestOptions.map((num) => (
+            <button
+              key={num}
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, numberOfGuests: num }))}
+              className={`btn px-3 py-2 ${formData.numberOfGuests === num ? 'btn-warning' : 'btn-outline-light'}`}
+              style={{ 
+                borderRadius: "10px", 
+                fontSize: "0.85rem",
+              }}
+            >
+              {num} {lang === "ar" ? "أشخاص" : "People"}
+            </button>
+          ))}
         </div>
       </div>
 
