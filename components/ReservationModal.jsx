@@ -91,11 +91,24 @@ export default function ReservationModal() {
 
   // International flight options
   const flightOptions = [
-    { airline: "Emirates", from: "JED", to: "DXB", time: "06:00 AM", duration: "2h 30m", price: "$299", class: "Economy" },
-    { airline: "Turkish Airlines", from: "RUH", to: "IST", time: "10:00 AM", duration: "4h 15m", price: "$349", class: "Economy" },
-    { airline: "British Airways", from: "DMM", to: "LHR", time: "08:00 PM", duration: "6h 45m", price: "$599", class: "Business" },
-    { airline: "Qatar Airways", from: "MED", to: "BKK", time: "02:00 PM", duration: "7h 30m", price: "$449", class: "Economy" },
+    { airline: "Emirates", from: "JED", to: "DXB", time: "06:00 AM", duration: "2h 30m", price: "", class: "Economy" },
+    { airline: "Turkish Airlines", from: "RUH", to: "IST", time: "10:00 AM", duration: "4h 15m", price: "", class: "Economy" },
+    { airline: "British Airways", from: "DMM", to: "LHR", time: "08:00 PM", duration: "6h 45m", price: "", class: "Business" },
+    { airline: "Qatar Airways", from: "MED", to: "BKK", time: "02:00 PM", duration: "7h 30m", price: "", class: "Economy" },
   ];
+
+  // Helper to get tomorrow's date as YYYY-MM-DD for default date fields
+  const getDefaultDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const year = tomorrow.getFullYear();
+    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const day = String(tomorrow.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Get default date once for use in all date fields
+  const defaultDate = getDefaultDate();
 
   const [formData, setFormData] = useState({
     // General Info (Both Local & International)
@@ -110,7 +123,7 @@ export default function ReservationModal() {
     region: "",
     city: "",
     localDestination: "", // Changed from "destination" to avoid conflict
-    date: "",
+    date: defaultDate,
     entertainment: [],
     folkloreShow: [],
     customEntertainment: "",
@@ -122,8 +135,8 @@ export default function ReservationModal() {
     customDinnerLocal: "",
 
     // International fields (existing)
-    checkInDate: "",
-    checkOutDate: "",
+    checkInDate: defaultDate,
+    checkOutDate: defaultDate,
     roomType: "standard",
     roomCount: 1,
     hotelAmenities: {
@@ -134,8 +147,8 @@ export default function ReservationModal() {
     },
     flightFrom: "JED",
     flightTo: "DXB",
-    departureDate: "",
-    returnDate: "",
+    departureDate: defaultDate,
+    returnDate: defaultDate,
     flightClass: "economy",
     passengers: 1,
     entertainmentInt: "",
@@ -212,7 +225,7 @@ useEffect(() => {
         region: "",
         city: "",
         localDestination: "",
-        date: "",
+        date: defaultDate,
         entertainment: [],
         folkloreShow: [],
         customEntertainment: "",
@@ -224,8 +237,8 @@ useEffect(() => {
         customDinnerLocal: "",
 
         // International fields
-        checkInDate: "",
-        checkOutDate: "",
+        checkInDate: defaultDate,
+        checkOutDate: defaultDate,
         roomType: "standard",
         roomCount: 1,
         hotelAmenities: {
@@ -236,8 +249,8 @@ useEffect(() => {
         },
         flightFrom: "JED",
         flightTo: flightTo,
-        departureDate: "",
-        returnDate: "",
+        departureDate: defaultDate,
+        returnDate: defaultDate,
         flightClass: "economy",
         passengers: 1,
         entertainmentInt: "",
@@ -663,7 +676,13 @@ useEffect(() => {
         };
 
         // Validate preferred date locally before sending
-        const preferredDate = bookingLocation === 'local' ? formData.date : (formData.checkInDate || formData.departureDate || null);
+        let preferredDate = bookingLocation === 'local' ? formData.date : (formData.checkInDate || formData.departureDate || null);
+        
+        // Fallback to default date if somehow empty
+        if (!preferredDate) {
+          preferredDate = defaultDate;
+        }
+        
         if (!preferredDate) {
           setSubmitError(lang === 'ar' ? 'الرجاء اختيار التاريخ المفضل' : 'Please select a preferred date.');
           setIsSubmitted(false);
