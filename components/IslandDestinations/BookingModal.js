@@ -194,6 +194,19 @@ export default function BookingModal({
     },
   ];
 
+  // Helper to get tomorrow's date as YYYY-MM-DD for default date fields
+  const getDefaultDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const year = tomorrow.getFullYear();
+    const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const day = String(tomorrow.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Get default date once for use in all date fields
+  const defaultDate = getDefaultDate();
+
   const [formData, setFormData] = useState({
     // General Info (Both Local & International)
     bookingLocation: "international",
@@ -207,7 +220,7 @@ export default function BookingModal({
     region: "",
     city: "",
     localDestination: "", // Changed from "destination" to avoid conflict
-    date: "",
+    date: defaultDate,
     entertainment: [],
     folkloreShow: [],
     customEntertainment: "",
@@ -219,8 +232,8 @@ export default function BookingModal({
     customDinnerLocal: "",
 
     // International fields (existing)
-    checkInDate: "",
-    checkOutDate: "",
+    checkInDate: defaultDate,
+    checkOutDate: defaultDate,
     roomType: "standard",
     roomCount: 1,
     roomsNearEachOther: false,
@@ -233,8 +246,8 @@ export default function BookingModal({
     },
     flightFrom: "JED",
     flightTo: "DXB",
-    departureDate: "",
-    returnDate: "",
+    departureDate: defaultDate,
+    returnDate: defaultDate,
     flightClass: "economy",
     passengers: 1,
     entertainmentInt: "",
@@ -754,11 +767,14 @@ export default function BookingModal({
         // Map our bookingData to the expected reservation fields
         let payload = null;
         try {
+          // Get preferred date with fallback to defaultDate
+          const preferredDate = bookingData.date || bookingData.checkInDate || defaultDate;
+          
           payload = {
             name: bookingData.name || bookingData.userEmail || "Guest",
             email: bookingData.userEmail || null,
             phone: bookingData.phoneNumber || null,
-            date: bookingData.date || bookingData.checkInDate || null,
+            date: preferredDate,
             guests: bookingData.numberOfGuests || bookingData.passengers || 1,
             amount: bookingData.amount || null,
             trip_slug:
